@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -32,12 +33,16 @@ func main() {
 // This method implements binding.Validator and is executed by the binding.Validate middleware
 func (contactRequest ContactRequest) Validate(errors *binding.Errors, req *http.Request) {
 	log.Println("Validating User")
-	v := validation.Validation{Errors: *errors}
+	// v := validation.Validation{Errors: *errors}
 
-	//run some validators
+	v := validation.New(errors, req)
+
+	// //run some validators
 	v.MaxLength(len(contactRequest.Comments), 20, "comments")
 	v.MinLength(len(contactRequest.FullName), 4, "full_name")
 	v.Email(contactRequest.Email, "email")
+
+	fmt.Println("Validation Obj", &v.Errors.Fields)
 }
 
 type ContactRequest struct {
